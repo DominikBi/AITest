@@ -1,6 +1,7 @@
 package main;
 
 import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -8,75 +9,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Rectangle extends JComponent {
-    JTextField textField = new JTextField();
-    int xChar = 55;
-    boolean drawn = false;
-    String text = "";
+    java.awt.Rectangle oval = new java.awt.Rectangle(10,10,20,20);
+    boolean drawOval;
+    JFrame popupMenu = new JFrame();
+    JTextField jTextField = new JTextField();
 
+    public Rectangle(){
+
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
-        setFocusable(true);
-        g.drawRect(30, 30, 580, 300);
-        g.drawRect(50, 50, 500, 50);
-        KeyListener keyListener = new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                System.out.println(e.getKeyChar());
-                if (e.getKeyChar() == 'a') {
-                    try {
-                        for (int i = 0; i < System.in.available(); i++) {
-                            text += System.in.read();
-                        }
-
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-
-                }
-                super.keyTyped(e);
-            }
+       g.drawOval(oval.x,oval.y,oval.width,oval.height);
+        work();
 
 
-        };
-        addKeyListener(keyListener);
-        if(drawn){
-            g.drawString(text,xChar,75);
-            drawn = false;
-        }
-        work(text);
+
         super.paintComponent(g);
 
     }
-    public void work(String text){
-        char[] textAsCharArray = text.toCharArray();
-        Map<String, Integer> operatorPoints = new HashMap<>();
-        boolean divide;
-        boolean plus;
-        boolean minus;
-        boolean multiply;
-        for(int i = 0; i < textAsCharArray.length; i++){
-            if(textAsCharArray[i] == '+'){
-                plus = true;
-                operatorPoints.put("plus",i);
+    public void work(){
+        popupMenu.setSize(200,100);
+        popupMenu.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/2, Toolkit.getDefaultToolkit().getScreenSize().height/2);
+        popupMenu.setLayout(new FlowLayout());
+        popupMenu.add(jTextField);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                System.out.println("0");
+                System.out.println(e.getPoint());
+                System.out.println(oval.x +  " " + oval.y + " " + oval.width + " " + oval.height);
+                java.awt.Rectangle newOval;
+                newOval = oval;
+                newOval.y = 0;
+                newOval.x = 0;
+                newOval.height = 30;
+                newOval.width = 30;
+                if(newOval.contains(e.getPoint())){
+                    drawOval = true;
+                    //popupMenu.setVisible(true);
+                }
+                super.mouseEntered(e);
             }
-            else if(textAsCharArray[i] == '-'){
-                minus = true;
-                operatorPoints.put("minus",i);
-            }
-            else if(textAsCharArray[i] == '/'){
-                divide = true;
-                operatorPoints.put("divide",i);
-            }
-            else if(textAsCharArray[i] == '*'){
-                multiply = true;
-                operatorPoints.put("multiply",i);
-
-            }
-
-
-        }
-
-
+        });
     }
 }
