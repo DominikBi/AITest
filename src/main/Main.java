@@ -162,7 +162,7 @@ public class Main {
                 }
                 System.out.println(randomPath.charAt(randomPath.length()-1) + " : " + c3);
                 randomPath.replace(randomPath.charAt(randomPath.length()-1),' ');
-                i1++;
+                i1++;//a
             }
             System.out.println(randomPath);
 
