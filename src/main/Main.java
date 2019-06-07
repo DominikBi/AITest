@@ -27,6 +27,8 @@ public class Main {
     String sep = System.getProperty("file.separator");
 
     String filename;
+    Boolean paint = false;
+    JComboBox box = new JComboBox();
     JTextArea name = new JTextArea("Filename: ");
     JTextArea types = new JTextArea("File type: ");
     JTextArea chars = new JTextArea("Max chars: ");
@@ -95,14 +97,12 @@ public class Main {
         });
 
     }
-    public String readFile(String filename, String type){
+    public String readFile(String filename){
         char c;
         String end = "";
-        String home = System.getProperty("user.home");
 
-        String sep = System.getProperty("file.separator");
         try {
-        FileInputStream fis = new FileInputStream(home +sep+filename + type);
+        FileInputStream fis = new FileInputStream(filename);
         while (fis.available() > 0){
             c = (char) fis.read();
             end += c;
@@ -118,116 +118,45 @@ public class Main {
 
         }
         public void start() {
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel();
+        JComboBox comboBox = new JComboBox();
+        JComboBox allFiles = new JComboBox();
+        File Cfiles;
 
-        button.addActionListener(e -> {
-            try {
-                maxCharsint = Integer.parseInt( maxChars.getText());
+        Cfiles = File.listRoots()[0];
+                for(File file : File.listRoots()){
+            comboBox.addItem(file);
 
-            } catch (NumberFormatException ex) {
-                JFrame popFrame = new JFrame();
-                JPanel popPanel = new JPanel();
-                    popFrame.setSize(260,150);
-                popFrame.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/2 - 130,Toolkit.getDefaultToolkit().getScreenSize().height/2-75);
-                JTextField popField = new JTextField();
-                JButton popButton = new JButton("OK");
-                popPanel.setLayout(new BoxLayout(popPanel, BoxLayout.PAGE_AXIS));
-                popField.setText("The maximum char has to be a number!");
-                popField.setEditable(false);
-                popPanel.add(popField);
-                popPanel.add(popButton);
-                popFrame.add(popPanel);
-                popFrame.setVisible(true);
-                popButton.addActionListener(e12 -> {
-                    popFrame.setVisible(false);
+        }
+        for (File file :  Cfiles.listFiles()){
+            allFiles.addItem(file);
+        }
+        allFiles.addItemListener(e -> {
 
 
-                });
+            System.out.println(e.getItem().toString());
+            File tempFile = new File(e.getItem().toString());
+            System.out.println(tempFile.isDirectory());
+            if(!tempFile.isDirectory()){
+                System.out.println(readFile(tempFile.getPath()));
             }
+            System.out.println(tempFile.listFiles());
+            File[] files = tempFile.listFiles();
+            box.removeAllItems();
+
+            for(File file : files){
 
 
-        String randomPath = "";
-        int i1 = 0;
-        int i2 =0;
-        for(int i = 0; i < maxCharsint; i++) {
+            box.addItem(file);
 
-            i1 = 0;
-            for (char c3 = 'a'; i1 < 26; c3++) {
-                randomPath += c3;
-                File file = new File(home + sep + randomPath + type.getText());
-
-                if (file.exists()) {
-                    System.out.println("Found: " + randomPath);
-
-
-                }
-                System.out.println(randomPath.charAt(randomPath.length()-1) + " : " + c3);
-                randomPath.replace(randomPath.charAt(randomPath.length()-1),' ');
-                i1++;//a
             }
-            System.out.println(randomPath);
-
-        }});
-
-
-            JPanel panel = new JPanel();
-            JFrame frame = new JFrame();
-            filename = "";
-            maxChars.setPreferredSize(new Dimension(250,70));
-            textField.setPreferredSize(new Dimension(250, 70));
-            type.setPreferredSize(new Dimension(250,70));
-            panel.setLayout(new FlowLayout());
-            name.setEditable(false);
-            types.setEditable(false);
-            chars.setEditable(false);
-            panel.add(name);
-            panel.add(textField);
-            panel.add(types);
-            panel.add(type);
-            panel.add(chars);
-            panel.add(maxChars);
-            panel.add(button);
-            panel.add(jButton);
-            ArrayList<Character> al = new ArrayList<>();
-            int i =0;
-            for(char c = 'a'; i < 26 ; c++){
-                al.add(c);
-                System.out.println(al.get(i));
-                i++;
-            }
-            jButton.addActionListener(e -> {
-                filename = textField.getText();
-                String fileType = type.getText();
+            panel.add(box);
+        });
 
 
-
-                System.out.println(fileType);
-                try {
-                    String home = System.getProperty("user.home");
-                    String sep = System.getProperty("file.separator");
-
-                    File file = new File(home + sep+ filename + fileType);
-
-                    if(file.exists()) {
-                        JFrame jFrame = new JFrame();
-                        JPanel panel1 = new JPanel();
-                        JTextArea jTextArea = new JTextArea();
-                        System.out.println(readFile(filename, fileType));
-                        jTextArea.append(readFile(filename, fileType));
-                        jTextArea.setPreferredSize(new Dimension(300,300));
-                        jTextArea.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/2, 300);
-                        jTextArea.setEditable(false);
-                        panel1.setLayout(new FlowLayout());
-                        panel1.add(jTextArea);
-
-                        jFrame.add(panel1);
-                    }
-                } catch (NullPointerException e1) {
-                    System.err.println(e1);
-
-                }
-            });
-
-
+        panel.add(comboBox);
+        panel.add(allFiles);
 
         frame.setLayout(new FlowLayout());
         frame.add(panel);
